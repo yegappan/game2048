@@ -1,0 +1,309 @@
+*game2048.txt*   A 2048 game plugin for Vim9
+*2048* *game2048*
+
+================================================================================
+CONTENTS                                                    *game2048-contents*
+
+1. Introduction .......................... |game2048-intro|
+2. Installation .......................... |game2048-install|
+3. Usage ................................. |game2048-usage|
+4. Commands ............................. |game2048-commands|
+5. Keybindings .......................... |game2048-keybindings|
+6. Game Rules ........................... |game2048-rules|
+7. Implementation Details ............... |game2048-implementation|
+8. License .............................. |game2048-license|
+
+================================================================================
+1. INTRODUCTION                                                *game2048-intro*
+
+2048 for Vim9 is a faithful implementation of the popular 2048 puzzle game,
+built entirely in Vim9script. This plugin demonstrates advanced Vim9 features
+including:
+
+  • Classes and objects with proper encapsulation
+  • Interfaces for type-safe contracts (IGame, IGameUI)
+  • Enums for type-safe constants (Direction)
+  • Type aliases for semantic naming (Position)
+  • Strict type annotations throughout
+  • Modular architecture with clear separation of concerns
+  • Proper null handling with null_object
+
+The game runs in a Vim popup window and supports both arrow keys and hjkl
+navigation keys. This plugin requires Vim 9.0 or later and will not work with
+Neovim. The modular design makes it an excellent reference for building
+medium-sized Vim9 plugins with professional-grade architecture.
+
+================================================================================
+2. INSTALLATION                                            *game2048-install*
+
+You can install this plugin directly from github using the following steps: >
+
+  git clone https://github.com/yegappan/game2048 $HOME/.vim/pack/downloads/opt/game2048
+  vim -u NONE -c "helptags $HOME/.vim/pack/downloads/opt/game2048" -c q
+<
+After installing the plugin using the above steps, add the following line to
+your $HOME/.vimrc file: >
+
+  packadd game2048
+<
+You can also install and manage this plugin using any one of the Vim plugin
+managers (dein.vim, pathogen, vam, vim-plug, volt, Vundle, etc.).
+
+
+================================================================================
+3. USAGE                                                      *game2048-usage*
+
+Starting a Game
+---------------
+
+Start a new 2048 game using the command:
+>
+    :Game2048
+<
+
+This will open the game board in a centered popup window.
+
+Playing the Game
+----------------
+
+Use any of the following keys to move tiles:
+
+  • Arrow Keys: ← → ↑ ↓
+  • HJKL Keys:  h l k j
+
+Each move attempts to combine tiles with the same value. When two tiles of
+equal value touch, they merge into one tile with their sum as the new value.
+
+Resetting the Game
+------------------
+
+While the game is running, press 'r' to reset the board with a fresh game.
+
+Closing the Game
+----------------
+
+While the game is running, press 'q' to close the game window and return to
+the editor.
+
+Alternative close command:
+>
+    :Game2048Close
+<
+
+================================================================================
+4. COMMANDS                                               *game2048-commands*
+
+:Game2048
+    Start a new 2048 game in a popup window.
+
+:Game2048Close
+    Close the current game window.
+
+================================================================================
+5. KEYBINDINGS                                         *game2048-keybindings*
+
+During gameplay, the following keys are active (only within the game popup):
+
+h or <Left>    Move tiles left
+l or <Right>   Move tiles right
+k or <Up>      Move tiles up
+j or <Down>    Move tiles down
+r              Reset the current game
+q              Close the game window and quit
+
+================================================================================
+6. GAME RULES                                              *game2048-rules*
+
+Objective
+---------
+
+The goal of 2048 is to slide numbered tiles on a 4×4 grid to combine them
+and create a tile with the number 2048.
+
+How to Play
+-----------
+
+1. Every turn, you can slide all tiles in one direction: left, right, up, or
+   down.
+
+2. When tiles with the same number touch, they merge into one tile with that
+   number doubled.
+
+3. After each move, a new tile (either 2 or 4) appears in a random empty
+   space on the grid.
+
+4. Continue until you reach the 2048 tile (you can continue playing beyond
+   this).
+
+5. The game ends when the board is full and no more moves are possible.
+
+Scoring
+-------
+
+Your score increases by the value of the new tile created when two tiles
+merge. The scoreboard at the top of the game window shows:
+
+  • Current Score: Total points from merges
+  • Moves: Total number of moves made
+
+Winning and Losing
+------------------
+
+  • You WIN when you create your first 2048 tile
+  • You LOSE when the board is full with no possible merges (game over state)
+
+================================================================================
+7. IMPLEMENTATION DETAILS                            *game2048-implementation*
+
+Vim9 Features Used
+------------------
+
+This plugin demonstrates several modern Vim9 features:
+
+Classes
+    • GameBoard: 4×4 grid management and 2048 game mechanics
+    • Game: Main controller implementing IGame interface
+    • GameUI: Popup rendering and input implementing IGameUI interface
+
+Interfaces
+    Type-safe contracts for game components:
+>
+    interface IGame
+      def Reset(): void
+      def HandleInput(direction: Direction): void
+      def Close(): void
+    endinterface
+
+    interface IGameUI
+      def Show(): void
+      def Hide(): void
+      def SetGameInstance(game: IGame): void
+      def Update(): void
+    endinterface
+<
+
+Enum
+    Direction enum provides type-safe movement constants:
+>
+    enum Direction
+      LEFT,
+      RIGHT,
+      UP,
+      DOWN,
+    endenum
+<
+
+Type Aliases
+    Semantic type aliases improve code readability:
+>
+    type Position = list<number>   " [row, col] coordinate pair
+<
+
+Type Checking
+    Strict type annotations throughout:
+    • All function parameters have explicit types
+    • Return types specified on all functions
+    • Loop variables typed: for row: number in range(...)
+    • Collections fully typed: list<list<number>>, dict<any>
+    • Nullable objects: var _ui: IGameUI = null_object
+
+Module Architecture
+-------------------
+
+The plugin uses a modular architecture with clear separation of concerns:
+
+  constants.vim
+    • Game configuration (GRID_SIZE, POPUP_WIDTH, TARGET_SCORE, etc.)
+    • No dependencies
+
+  types.vim
+    • Type aliases and Position type
+    • Direction enum
+    • IGame and IGameUI interface contracts
+    • No dependencies
+
+  game_board.vim
+    • GameBoard class with 2048 mechanics
+    • Move(), MergeLine(), CompressLine(), CanMove() algorithms
+    • Score and state tracking
+    • Dependencies: constants, types
+
+  ui.vim
+    • GameUI class for popup rendering
+    • FilterKey() for input handling
+    • GenerateDisplay() for board rendering
+    • Dependencies: constants, types, game_board
+
+  game.vim
+    • Game class coordinating board and UI
+    • Implements IGame interface
+    • Dependencies: types, game_board, ui
+
+  game2048.vim (Main Entry Point)
+    • GetGameInstance() - singleton game instance
+    • CloseGame() - cleanup and shutdown
+    • Public API for the plugin
+    • Dependencies: types, game
+
+Design Patterns
+---------------
+
+Interface-Based Design
+    • IGame and IGameUI interfaces break circular dependency
+    • Game refers to IGameUI (not GameUI)
+    • GameUI refers to IGame (not Game)
+    • Enables loose coupling and better testability
+
+Singleton Pattern
+    • Game instance managed at module level
+    • GetGameInstance() lazily creates game on first call
+    • game_instance set to null_object after CloseGame()
+
+Strict Type Safety
+    • No 'any' types for game domain objects
+    • Explicit type annotations prevent runtime errors
+    • null_object used correctly for nullable objects
+    • Enum usage for direction constants
+
+Algorithm Details
+------------------
+
+Movement Algorithm
+    For each direction, tiles are processed in sequence:
+    1. Compress: Remove empty spaces (gaps)
+    2. Merge: Combine adjacent equal-value tiles
+    3. Compress Again: Remove gaps created by merges
+    4. Spawn: Add new random tile if move was valid
+
+Game Over Detection
+    The game is over when BOTH conditions are true:
+    • Board has no empty cells AND
+    • No adjacent tiles have the same value
+
+Scoring
+    • Each merge adds the new tile value to score
+    • Score persists across moves until reset
+
+Tile Spawning
+    After each valid move:
+    • Random empty cell selected
+    • 90% probability new tile = 2
+    • 10% probability new tile = 4
+
+Performance Considerations
+    For 4×4 grid:
+    • Move operation: O(n²) where n = GRID_SIZE
+    • Game over detection: O(n²)
+    • Popup rendering: Real-time updates
+
+================================================================================
+8. LICENSE                                                  *game2048-license*
+
+This Vim9 2048 implementation is provided as-is for educational purposes.
+The original 2048 game concept is by Gabriele Cirulli.
+
+================================================================================
+
+For issues or suggestions, refer to the plugin documentation or source code.
+
+vim:tw=78:ts=8:ft=help:norl:
