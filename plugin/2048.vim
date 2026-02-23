@@ -1,21 +1,19 @@
 vim9script
+# 2048 Game Plugin for Vim9
+# Sliding puzzle game - combine tiles to reach 2048 and beyond
+# Requires: Vim 9.0+
 
 if exists('g:loaded_2048')
   finish
 endif
 g:loaded_2048 = 1
 
-import autoload '../autoload/game2048.vim'
+import autoload '../autoload/game2048.vim' as Game2048
 
-def Start2048Game(): void
-  game2048.CloseGame()
-  var game = game2048.GetGameInstance()
-  game.Start()
-enddef
+# Default configuration
+if !exists('g:game2048_target_tile')
+  g:game2048_target_tile = 2048
+endif
 
-def CloseGame(): void
-  game2048.CloseGame()
-enddef
-
-command! Game2048 call Start2048Game()
-command! Game2048Close call CloseGame()
+# Commands to start the game
+command! Game2048 call Game2048.GetGameInstance().Start()

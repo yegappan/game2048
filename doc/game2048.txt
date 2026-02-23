@@ -111,9 +111,6 @@ installation procedures for local plugins.
 :Game2048
     Start a new 2048 game in a popup window.
 
-:Game2048Close
-    Close the current game window and return to the editor.
-
 ================================================================================
 4. CONTROLS                                         *game2048-controls*
 
