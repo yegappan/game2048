@@ -1,4 +1,4 @@
-# 2048 Game for Vim9
+# 2048 Game in Vim9script
 
 A complete implementation of the 2048 puzzle game for Vim9, showcasing modern Vim9script features including classes, interfaces, enums, strict type checking, and modular architecture.
 
