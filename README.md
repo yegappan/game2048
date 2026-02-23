@@ -14,17 +14,86 @@ A complete implementation of the 2048 puzzle game for Vim9, showcasing modern Vi
 
 ## Installation
 
-You can install this plugin directly from github using the following steps:
+### Using Git
+If you have git installed, run the following command in your terminal:
 
-git clone https://github.com/yegappan/game2048 $HOME/.vim/pack/downloads/opt/game2048
-vim -u NONE -c "helptags $HOME/.vim/pack/downloads/opt/game2048/doc" -c q
+**Unix/Linux/macOS:**
 
-After installing the plugin using the above steps, add the following line to your $HOME/.vimrc file:
+```bash
+git clone https://github.com/yegappan/game2048.git ~/.vim/pack/downloads/opt/game2048
+```
+**Windows (cmd.exe):**
 
+```cmd
+git clone https://github.com/yegappan/game2048.git %USERPROFILE%\vimfiles\pack\downloads\opt\game2048
+```
+
+### Using a ZIP file
+If you prefer not to use Git:
+
+**Unix/Linux/macOS:**
+
+Create the destination directory:
+
+```bash
+mkdir -p ~/.vim/pack/downloads/opt/
+```
+
+Download the plugin ZIP file from GitHub and extract its contents into the directory created above.
+
+*Note:* GitHub usually names the extracted folder game2048-main. Rename it to game2048 so the final path looks like this:
+
+```plaintext
+~/.vim/pack/downloads/opt/game2048/
+├── plugin/
+├── autoload/
+└── doc/
+```
+
+**Windows (cmd.exe):**
+
+Create the destination directory:
+
+```cmd
+if not exist "%USERPROFILE%\vimfiles\pack\downloads\opt" mkdir "%USERPROFILE%\vimfiles\pack\downloads\opt"
+```
+
+Download the plugin ZIP file from GitHub and extract its contents into that directory.
+
+*Note:* Rename the extracted folder (usually game2048-main) to game2048 so the path matches:
+
+```plaintext
+%USERPROFILE%\vimfiles\pack\downloads\opt\game2048\
+├── plugin/
+├── autoload/
+└── doc/
+```
+
+**Finalizing Setup**
+Since this plugin is installed in the opt (optional) directory, it will not load automatically. Add the following line to your .vimrc (Unix) or _vimrc (Windows):
+
+```viml
 packadd game2048
+```
 
-You can also install and manage this plugin using any one of the Vim plugin managers (dein.vim, pathogen, vam, vim-plug, volt, Vundle, etc.).
+After adding the line, restart Vim and run the following command to enable the help documentation:
 
+```viml
+:helptags ALL
+```
+
+### Plugin Manager Installation
+
+If using a plugin manager like vim-plug, add to your .vimrc or init.vim:
+
+   ```viml
+   Plug 'path/to/game2048'
+   ```
+
+Then run `:PlugInstall` and `:helptags ALL`
+
+For other plugin managers (Vundle, Pathogen, etc.), follow their standard
+installation procedures for local plugins.
 
 ## Usage
 
